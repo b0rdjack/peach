@@ -1,14 +1,14 @@
 import { Alert } from "react-native";
 
-export function createAlert(messages) {
+export function createAlert(title, messages, simple) {
   let message = "";
-  if (Array.isArray(messages)) {
-    message = splitMessages(messages);
-  } else {
+  if (simple) {
     message = messages;
+  } else {
+    message = splitMessages(messages);
   }
 
-  Alert.alert("Oups !", message, [{ text: "OK" }], {
+  Alert.alert(title, message, [{ text: "OK" }], {
     cancelable: false,
   });
 }

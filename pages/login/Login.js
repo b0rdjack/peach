@@ -22,7 +22,10 @@ export default class Login extends Component {
   }
   render() {
     return (
-      <KeyboardAvoidingView style={styles.container} keyboardShouldPersistTaps='handled'>
+      <KeyboardAvoidingView
+        style={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.headerContainer}>
           <Text category="h1" status="control">
             Connexion
@@ -32,7 +35,7 @@ export default class Login extends Component {
           <Input
             placeholder="E-mail"
             size="large"
-            autoCapitalize= 'none'
+            autoCapitalize="none"
             accessoryRight={EmailIcon}
             value={this.state.email}
             onChangeText={this.setEmail}
@@ -129,10 +132,6 @@ export default class Login extends Component {
       !this.state.showEmailError &&
       !this.state.showPasswordError
     ) {
-      let send_data = {
-        email: this.state.email,
-        password: this.state.password,
-      };
       fetch(API_URL + "customer", {
         method: "POST",
         headers: {
@@ -151,14 +150,14 @@ export default class Login extends Component {
             await AsyncStorage.setItem("token", token);
             this.props.navigation.navigate("App");
           } else {
-            createAlert(response.messages);
+            createAlert("Oups!", response.messages, false);
           }
         })
         .catch((e) => {
           console.error(e);
         });
     } else {
-      createAlert("Veuillez saisir tous les champs !");
+      createAlert("Oups !", "Veuillez saisir tous les champs !", true);
     }
   };
 }
