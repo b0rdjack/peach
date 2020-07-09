@@ -81,7 +81,7 @@ export default class Signup extends Component {
             placeholder="Mot de passe"
             style={styles.inputs}
             accessoryRight={LockIcon}
-            caption="Une majuscule, une minuscule, un chiffre et un caractère spéciale."
+            caption="Une majuscule, une minuscule, un chiffre, un caractère spéciale et 8 caractères minimum."
             value={this.state.password}
             secureTextEntry={true}
             onChangeText={this.setPassword}

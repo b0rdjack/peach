@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
-import AsyncStorage from '@react-native-community/async-storage';
+import { View, StyleSheet, Keyboard } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { Layout, Text, Input, Icon, Button } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import { KeyboardAvoidingView } from "./3rd-party";
-
+import { API_URL } from "../../constant";
+import { createAlert } from "../../components/Alert";
 const LockIcon = (props) => <Icon name="lock" {...props} />;
 
 const EmailIcon = (props) => <Icon name="email" {...props} />;
@@ -14,13 +15,14 @@ export default class Login extends Component {
     super(props);
     this.state = {
       email: "",
+      showEmailError: true,
       password: "",
-      passwordVisible: false,
+      showPasswordError: true,
     };
   }
   render() {
     return (
-      <KeyboardAvoidingView style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} keyboardShouldPersistTaps='handled'>
         <View style={styles.headerContainer}>
           <Text category="h1" status="control">
             Connexion
@@ -30,19 +32,25 @@ export default class Login extends Component {
           <Input
             placeholder="E-mail"
             size="large"
+            autoCapitalize= 'none'
             accessoryRight={EmailIcon}
             value={this.state.email}
             onChangeText={this.setEmail}
+            caption={
+              this.state.showEmailError ? "Adresse e-mail non valide" : ""
+            }
           />
           <Input
             size="large"
             style={styles.passwordInput}
             placeholder="Mot de passe"
             accessoryRight={LockIcon}
-            caption="Une majuscule, une minuscule, un chiffre et un caractère spéciale."
             value={this.state.password}
             secureTextEntry={true}
             onChangeText={this.setPassword}
+            caption={
+              this.state.showPasswordError ? "Mot de passe non valide" : ""
+            }
           />
           <View style={styles.forgotPasswordContainer}>
             <Button
@@ -75,15 +83,32 @@ export default class Login extends Component {
   }
 
   setEmail = (value) => {
-    this.setState({
-      email: value,
-    });
+    let regex = /\S+@\S+\.\S+/;
+    if (!regex.test(value)) {
+      this.setState({
+        email: value,
+        showEmailError: true,
+      });
+    } else {
+      this.setState({
+        email: value,
+        showEmailError: false,
+      });
+    }
   };
 
   setPassword = (value) => {
-    this.setState({
-      password: value,
-    });
+    if (value.length < 8) {
+      this.setState({
+        password: value,
+        showPasswordError: true,
+      });
+    } else {
+      this.setState({
+        password: value,
+        showPasswordError: false,
+      });
+    }
   };
 
   onForgotPasswordButtonPress = () => {
@@ -94,10 +119,47 @@ export default class Login extends Component {
     this.props.navigation.navigate("Signup");
   };
 
-  _onSignIn = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
-    console.log("Hello");
+  _onSignIn = () => {
+    Keyboard.dismiss();
+    let email = this.state.email.toLowerCase();
+    let password = this.state.password;
+    if (
+      email != "" &&
+      password != "" &&
+      !this.state.showEmailError &&
+      !this.state.showPasswordError
+    ) {
+      let send_data = {
+        email: this.state.email,
+        password: this.state.password,
+      };
+      fetch(API_URL + "customer", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: this.state.email,
+          password: this.state.password,
+        }),
+      })
+        .then((response) => response.json())
+        .then(async (response) => {
+          if (!response.error) {
+            let token = response.token_type + " " + response.access_token;
+            await AsyncStorage.setItem("token", token);
+            this.props.navigation.navigate("App");
+          } else {
+            createAlert(response.messages);
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    } else {
+      createAlert("Veuillez saisir tous les champs !");
+    }
   };
 }
 
