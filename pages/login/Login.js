@@ -130,14 +130,7 @@ export default class Login extends Component {
 
   _onSignIn = () => {
     Keyboard.dismiss();
-    let email = this.state.email.toLowerCase();
-    let password = this.state.password;
-    if (
-      email != "" &&
-      password != "" &&
-      !this.state.showEmailError &&
-      !this.state.showPasswordError
-    ) {
+    if (!this.state.showEmailError && !this.state.showPasswordError) {
       this.setState({
         loading: true,
       });
@@ -148,7 +141,7 @@ export default class Login extends Component {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: this.state.email,
+          email: this.state.email.toLowerCase(),
           password: this.state.password,
         }),
       })
@@ -197,9 +190,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
-  },
-  signInLabel: {
-    marginTop: 16,
   },
   signInButton: {
     marginHorizontal: 16,

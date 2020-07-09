@@ -270,12 +270,6 @@ export default class Signup extends Component {
 
   onSignUp = () => {
     Keyboard.dismiss();
-    let lastname = this.state.lastname;
-    let firstname = this.state.firstname;
-    let email = this.state.email.toLowerCase();
-    let password = this.state.password;
-    let confirmation_password = this.state.confirm_password;
-    let date_of_birth = this.changeDate(this.state.date_of_birth);
     if (
       !this.state.showFirsnameError &&
       !this.state.showLastnameError &&
@@ -294,12 +288,12 @@ export default class Signup extends Component {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          last_name: lastname,
-          first_name: firstname,
-          email: email,
-          password: password,
-          password_confirmation: confirmation_password,
-          date_of_birth: date_of_birth,
+          last_name: this.state.lastname,
+          first_name: this.state.firstname,
+          email: this.state.email.toLowerCase(),
+          password: this.state.password,
+          password_confirmation: this.state.confirm_password,
+          date_of_birth: this.changeDate(this.state.date_of_birth),
         }),
       })
         .then((response) => response.json())
