@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Keyboard } from "react-native";
+import { View, StyleSheet, Keyboard, ActivityIndicator } from "react-native";
 import * as eva from "@eva-design/eva";
 import { KeyboardAvoidingView } from "../login/3rd-party";
 import { Layout, Input, Icon, Text, Button } from "@ui-kitten/components";
@@ -33,6 +33,7 @@ export default class Signup extends Component {
       date_of_birth: "JJ/MM/AAAA",
       showDateofbirthError: true,
       show: false,
+      loading: false,
       passwordMessage:
         "Une majuscule, une minuscule, un chiffre, un caractère spéciale et 8 caractères minimum.",
     };
@@ -44,9 +45,14 @@ export default class Signup extends Component {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.headerContainer}>
-          <Text category="h1" status="control">
+          <Text category="h1" status="control" style={styles.headerText}>
             Inscription
           </Text>
+          {this.state.loading == false ? (
+            <></>
+          ) : (
+            <ActivityIndicator size="large" color="#fff" />
+          )}
         </View>
         <Layout style={styles.formContainer} level="1">
           <Input
@@ -278,6 +284,9 @@ export default class Signup extends Component {
       !this.state.showPasswordError &&
       !this.state.showConfirmpasswordError
     ) {
+      this.setState({
+        loading: true,
+      });
       fetch(API_URL + "customer/register", {
         method: "POST",
         headers: {
@@ -295,7 +304,9 @@ export default class Signup extends Component {
       })
         .then((response) => response.json())
         .then(async (response) => {
-          console.log(response);
+          this.setState({
+            loading: false,
+          });
           if (!response.error) {
             createAlert("Merci !", response.messages, false);
             this.setState({
@@ -319,9 +330,15 @@ export default class Signup extends Component {
           }
         })
         .catch((e) => {
+          this.setState({
+            loading: false,
+          });
           console.error(e);
         });
     } else {
+      this.setState({
+        loading: false,
+      });
       createAlert("Oups !", "Veuillez saisir tous les champs !", true);
     }
   };
@@ -338,8 +355,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: "center",
     alignItems: "center",
-    minHeight: 150,
+    minHeight: 175,
     backgroundColor: "#3366FF",
+  },
+  headerText: {
+    marginBottom: 15,
   },
   formContainer: {
     flex: 1,

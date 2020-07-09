@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Keyboard } from "react-native";
+import { View, StyleSheet, Keyboard, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import { Layout, Text, Input, Icon, Button } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
@@ -18,6 +18,7 @@ export default class Login extends Component {
       showEmailError: true,
       password: "",
       showPasswordError: true,
+      loading: false,
     };
   }
   render() {
@@ -27,9 +28,14 @@ export default class Login extends Component {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.headerContainer}>
-          <Text category="h1" status="control">
+          <Text category="h1" status="control" style={styles.headerText}>
             Connexion
           </Text>
+          {this.state.loading == false ? (
+            <></>
+          ) : (
+            <ActivityIndicator size="large" color="#fff" />
+          )}
         </View>
         <Layout style={styles.formContainer} level="1">
           <Input
@@ -132,6 +138,9 @@ export default class Login extends Component {
       !this.state.showEmailError &&
       !this.state.showPasswordError
     ) {
+      this.setState({
+        loading: true,
+      });
       fetch(API_URL + "customer", {
         method: "POST",
         headers: {
@@ -145,6 +154,9 @@ export default class Login extends Component {
       })
         .then((response) => response.json())
         .then(async (response) => {
+          this.setState({
+            loading: false,
+          });
           if (!response.error) {
             let token = response.token_type + " " + response.access_token;
             await AsyncStorage.setItem("token", token);
@@ -154,9 +166,15 @@ export default class Login extends Component {
           }
         })
         .catch((e) => {
+          this.setState({
+            loading: false,
+          });
           console.error(e);
         });
     } else {
+      this.setState({
+        loading: false,
+      });
       createAlert("Oups !", "Veuillez saisir tous les champs !", true);
     }
   };
@@ -169,8 +187,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: "center",
     alignItems: "center",
-    minHeight: 216,
+    minHeight: 200,
     backgroundColor: "#3366FF",
+  },
+  headerText: {
+    marginBottom: 15,
   },
   formContainer: {
     flex: 1,
