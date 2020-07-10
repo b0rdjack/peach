@@ -17,6 +17,7 @@ import { KeyboardAvoidingView } from "../login/3rd-party";
 import { color } from "react-native-reanimated";
 import { API_URL } from "../../constant";
 import { createAlert } from "../../components/Alert";
+import * as Location from "expo-location";
 
 const ClockIcon = (props) => <Icon name="clock" {...props} />;
 
@@ -51,6 +52,12 @@ export default class Home extends Component {
       transports: [],
       showTransportError: true,
       selectedTransport: "",
+      location_permission: false,
+      location: {
+        latitude: null,
+        longitude: null,
+      },
+      disable: false,
     };
   }
   async componentDidMount() {
@@ -167,6 +174,7 @@ export default class Home extends Component {
           style={styles.searchButton}
           onPress={this._onSearch}
           size="giant"
+          disable={this.state.disable}
         >
           Générer un parcours !
         </Button>
@@ -345,6 +353,105 @@ export default class Home extends Component {
         console.error(e);
       });
   };
+
+  _getLocation = async () => {
+    const { status } = await Location.requestPermissionsAsync();
+    if (status !== "granted") {
+      this.setState({
+        location_permission: false,
+      });
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    this.setState({
+      location: {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      },
+    });
+  };
+
+  _onSearch = async () => {
+    if (
+      this.state.showAmountError ||
+      this.state.showDurationError ||
+      this.state.showSubcategoryError ||
+      this.state.showTagError ||
+      this.state.showTransportError
+    ) {
+      createAlert("Oups !", "Veuillez saisir tous les champs !", true);
+    } else {
+      this.setState({
+        loading: true,
+        disable: true,
+      });
+      await this._getLocation();
+      if (!this.state.location) {
+        createAlert(
+          "Oups !",
+          "Veuillez autoriser la localisation afin de vous proposer un parcour près de vous !",
+          true
+        );
+        this.setState({
+          loading: false,
+          disable: false,
+        });
+      } else if (
+        !this.state.location.latitude ||
+        !this.state.location.longitude
+      ) {
+        this.setState({
+          loading: false,
+          disable: false,
+        });
+        createAlert(
+          "Oups ! ",
+          "Nous n'arrivons pas à récupérer votre position ! \n Veuillez réessayer plus tard.",
+          true
+        );
+      } else {
+        fetch(API_URL + "search", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: this.state.token,
+          },
+          body: JSON.stringify({
+            position: {
+              longitude: this.state.location.longitude,
+              latitude: this.state.location.latitude,
+            },
+            duration: this.getSecondes(this.state.duration),
+            amount: this.state.amount,
+            transport: this.state.selectedTransport,
+            tags: this.state.selectedTags,
+            subcategories: this.state.selectedSubcategories,
+          }),
+        })
+          .then((response) => response.json())
+          .then(async (response) => {
+            this.setState({
+              loading: false,
+              disable: false,
+            });
+            if (!response.error) {
+              this.props.navigation.navigate('Journey', {
+                journey: response.journeys
+              });
+            } else {
+              createAlert("Oups !", response.messages, false);
+            }
+          });
+      }
+    }
+  };
+
+  getSecondes = (value) => {
+    let splitted = value.split(":");
+    let hour = splitted[0] * 3600
+    let minute = splitted[1] * 60
+    return hour + minute
+  }
 }
 
 const styles = StyleSheet.create({
@@ -368,12 +475,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 16,
-  },
-  row: {
-    marginTop: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
   },
   text: {
     margin: 2,
