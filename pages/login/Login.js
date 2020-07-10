@@ -21,6 +21,7 @@ export default class Login extends Component {
       loading: false,
     };
   }
+
   render() {
     return (
       <KeyboardAvoidingView
