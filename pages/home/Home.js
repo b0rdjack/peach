@@ -435,8 +435,8 @@ export default class Home extends Component {
               disable: false,
             });
             if (!response.error) {
-              this.props.navigation.navigate('Journey', {
-                journey: response.journeys
+              this.props.navigation.navigate('Journeys', {
+                journeys: response.journeys
               });
             } else {
               createAlert("Oups !", response.messages, false);

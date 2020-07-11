@@ -1,18 +1,24 @@
 import { createStackNavigator } from "react-navigation-stack";
 import Home from "../pages/home/Home";
-import Journey from "../pages/journey/Journey";
+import Journeys from "../pages/journeys/Journeys";
 
 const AppNavigation = createStackNavigator(
   {
-    Home: { screen: Home },
-    Journey: { screen: Journey },
+    Home: {
+      screen: Home,
+      navigationOptions: {
+        headerShown: false,
+      },
+    },
+    Journeys: {
+      screen: Journeys,
+      navigationOptions: {
+        title: "Parcours",
+      },
+    },
   },
   {
     intialRouteName: "Home",
-    headerMode: "none",
-    navigationOptions: {
-      headerVisible: false,
-    },
   }
 );
 
