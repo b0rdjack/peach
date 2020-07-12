@@ -9,7 +9,7 @@ export default class Section extends Component {
 
   render() {
     return (
-      <Layout style={styles.container} level="4">
+      <Layout style={styles.container} level="2">
         <Card status="danger" style={styles.card}>
           <View style={styles.title}>
             <Text category="s1">{this.props.section.from.name} </Text>
@@ -75,7 +75,7 @@ export default class Section extends Component {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 0,
+    flex: 1,
     marginVertical: 8,
     marginHorizontal: 25,
   },

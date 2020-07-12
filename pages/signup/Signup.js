@@ -58,6 +58,7 @@ export default class Signup extends Component {
           <Input
             placeholder="Prénom"
             accessoryRight={PersonIcon}
+            disabled={this.state.loading}
             value={this.state.firstname}
             onChangeText={this.setFirstname}
             caption={this.state.showFirsnameError ? "Prénom non valide" : ""}
@@ -74,6 +75,7 @@ export default class Signup extends Component {
             placeholder="Date de naissance"
             style={styles.inputs}
             accessoryRight={CalendarIcon}
+            disabled={this.state.loading}
             value={this.state.date_of_birth}
             onFocus={this.showDatePicker}
             onChange={this.showDatePicker}
@@ -97,6 +99,7 @@ export default class Signup extends Component {
             autoCapitalize="none"
             style={styles.inputs}
             accessoryRight={EmailIcon}
+            disabled={this.state.loading}
             value={this.state.email}
             onChangeText={this.setEmail}
             caption={
@@ -108,6 +111,7 @@ export default class Signup extends Component {
             style={styles.inputs}
             accessoryRight={LockIcon}
             value={this.state.password}
+            disabled={this.state.loading}
             secureTextEntry={true}
             onChangeText={this.setPassword}
             caption={
@@ -119,6 +123,7 @@ export default class Signup extends Component {
             style={styles.inputs}
             accessoryRight={LockIcon}
             value={this.state.confirm_password}
+            disabled={this.state.loading}
             secureTextEntry={true}
             onChangeText={this.setConfirmPassword}
             caption={
@@ -130,6 +135,7 @@ export default class Signup extends Component {
         </Layout>
         <Button
           style={styles.signUpButton}
+          disabled={this.state.loading}
           onPress={this.onSignUp}
           size="giant"
         >
@@ -137,6 +143,7 @@ export default class Signup extends Component {
         </Button>
         <Button
           style={styles.signInButton}
+          disabled={this.state.loading}
           appearance="ghost"
           status="basic"
           onPress={this.onSignInButtonPress}

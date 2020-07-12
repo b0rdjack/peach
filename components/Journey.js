@@ -30,13 +30,11 @@ export default class Journey extends Component {
             </View>
           </Card>
         </View>
-        <SafeAreaView style={{ flex: 1 }}>
-          <FlatList
-            data={this.props.journey.sections}
-            renderItem={this._renderSection}
-            keyExtractor={(item) => item.id}
-          />
-        </SafeAreaView>
+        <View style={{ flex: 1 }}>
+          {this.props.journey.sections.map((section, index) => {
+            return <Section key={index} section={section} />;
+          })}
+        </View>
       </Layout>
     );
   }
@@ -53,12 +51,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  safeview_container: {
-    flex: 1,
-  },
   title: {
     flex: 1,
-    marginTop: 16,
+    marginVertical: 16,
     marginHorizontal: 25,
   },
   card: {
@@ -91,8 +86,5 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
-  },
-  sections: {
-    flex: 10000000,
   },
 });

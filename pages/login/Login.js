@@ -44,6 +44,7 @@ export default class Login extends Component {
             size="large"
             autoCapitalize="none"
             accessoryRight={EmailIcon}
+            disabled={this.state.loading}
             value={this.state.email}
             onChangeText={this.setEmail}
             caption={
@@ -54,6 +55,7 @@ export default class Login extends Component {
             size="large"
             style={styles.passwordInput}
             placeholder="Mot de passe"
+            disabled={this.state.loading}
             accessoryRight={LockIcon}
             value={this.state.password}
             secureTextEntry={true}
@@ -66,6 +68,7 @@ export default class Login extends Component {
             <Button
               style={styles.forgotPasswordButton}
               appearance="ghost"
+              disabled={this.state.loading}
               status="basic"
               onPress={this.onForgotPasswordButtonPress}
             >
@@ -75,6 +78,7 @@ export default class Login extends Component {
         </Layout>
         <Button
           style={styles.signInButton}
+          disabled={this.state.loading}
           onPress={this._onSignIn}
           size="giant"
         >
@@ -82,6 +86,7 @@ export default class Login extends Component {
         </Button>
         <Button
           style={styles.signUpButton}
+          disabled={this.state.loading}
           appearance="ghost"
           status="basic"
           onPress={this.onSignUpButtonPress}

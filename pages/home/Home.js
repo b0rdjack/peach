@@ -86,6 +86,7 @@ export default class Home extends Component {
         </View>
         <Layout style={styles.formContainer} level="1">
           <Input
+            disabled={this.state.loading}
             label="Durée maximum du parcours en heure"
             size="large"
             accessoryRight={ClockIcon}
@@ -98,6 +99,7 @@ export default class Home extends Component {
             }
           />
           <Input
+            disabled={this.state.loading}
             label="Prix maximum par personne"
             size="large"
             style={styles.input}
@@ -114,6 +116,7 @@ export default class Home extends Component {
           <Divider style={styles.input} />
 
           <Select
+            disabled={this.state.loading}
             style={styles.input}
             placeholder="Mode de transport"
             accessoryLeft={NavigationIcon}
@@ -132,6 +135,7 @@ export default class Home extends Component {
           </Select>
 
           <Select
+            disabled={this.state.loading}
             style={styles.input}
             placeholder="Catégorie d'activités souhaitées"
             accessoryLeft={CategoryIcon}
@@ -151,6 +155,7 @@ export default class Home extends Component {
             ))}
           </Select>
           <Select
+            disabled={this.state.loading}
             style={styles.input}
             placeholder="Tag d'activités souhaitées"
             accessoryLeft={TagIcon}
@@ -174,7 +179,7 @@ export default class Home extends Component {
           style={styles.searchButton}
           onPress={this._onSearch}
           size="giant"
-          disable={this.state.disable}
+          disable={this.state.loading}
         >
           Générer un parcours !
         </Button>
@@ -382,7 +387,6 @@ export default class Home extends Component {
     } else {
       this.setState({
         loading: true,
-        disable: true,
       });
       await this._getLocation();
       if (!this.state.location) {
@@ -393,7 +397,6 @@ export default class Home extends Component {
         );
         this.setState({
           loading: false,
-          disable: false,
         });
       } else if (
         !this.state.location.latitude ||
@@ -401,7 +404,6 @@ export default class Home extends Component {
       ) {
         this.setState({
           loading: false,
-          disable: false,
         });
         createAlert(
           "Oups ! ",
@@ -432,11 +434,18 @@ export default class Home extends Component {
           .then(async (response) => {
             this.setState({
               loading: false,
-              disable: false,
             });
             if (!response.error) {
-              this.props.navigation.navigate('Journeys', {
-                journeys: response.journeys
+              let journeys = response.journeys;
+              journeys[0].sections = journeys[0].sections.concat(
+                journeys[0].sections
+              );
+              this.props.navigation.navigate("Journeys", {
+                journeys: journeys.concat(journeys),
+                position: {
+                  longitude: this.state.location.longitude,
+                  latitude: this.state.location.latitude,
+                },
               });
             } else {
               createAlert("Oups !", response.messages, false);
@@ -448,10 +457,10 @@ export default class Home extends Component {
 
   getSecondes = (value) => {
     let splitted = value.split(":");
-    let hour = splitted[0] * 3600
-    let minute = splitted[1] * 60
-    return hour + minute
-  }
+    let hour = splitted[0] * 3600;
+    let minute = splitted[1] * 60;
+    return hour + minute;
+  };
 }
 
 const styles = StyleSheet.create({

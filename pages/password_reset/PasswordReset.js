@@ -46,6 +46,7 @@ export default class PasswordReset extends Component {
             placeholder="E-mail"
             size="large"
             accessoryRight={EmailIcon}
+            disabled={this.state.loading}
             value={this.state.email}
             onChangeText={this.setEmail}
             caption={
@@ -55,6 +56,7 @@ export default class PasswordReset extends Component {
         </Layout>
         <Button
           style={styles.validationButton}
+          disabled={this.state.loading}
           onPress={this.onValidation}
           size="giant"
         >
@@ -62,6 +64,7 @@ export default class PasswordReset extends Component {
         </Button>
         <Button
           style={styles.loginButton}
+          disabled={this.state.loading}
           appearance="ghost"
           status="basic"
           onPress={this.onLoginButtonPress}
