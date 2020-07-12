@@ -94,7 +94,7 @@ export default class Home extends Component {
             onChangeText={this.setDuration}
             caption={
               this.state.showDurationError
-                ? "La durée n'est pas valide (ex: 00:45). Saisir au minimum 30 minutes."
+                ? "La durée n'est pas valide (ex: 00:45). Saisir au minimum 45 minutes."
                 : ""
             }
           />
@@ -216,7 +216,8 @@ export default class Home extends Component {
     if (this.isInt(hour) && this.isInt(minute)) {
       hour = parseInt(hour, 10);
       minute = parseInt(minute, 10);
-      if (hour > 23 || minute > 59 || minute < 30) {
+      // Hour not more than 23 or minutes not mort than 59. OR (not less than 30 minutes)
+      if (hour > 23 || minute > 59 || (hour == 0 && minute < 45)) {
         validity = false;
       }
     } else {
