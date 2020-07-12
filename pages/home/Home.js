@@ -71,20 +71,12 @@ export default class Home extends Component {
         style={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.headerContainer}>
-          <Text category="h1" status="control">
-            Parcours
-          </Text>
-          <Text style={styles.filterLabel} category="s1" status="control">
-            Définition du parcours
-          </Text>
+        <Layout style={styles.formContainer} level="1">
           {this.state.loading == false ? (
             <></>
           ) : (
-            <ActivityIndicator size="large" color="#fff" />
+            <ActivityIndicator size="large" color="#FFA13D" />
           )}
-        </View>
-        <Layout style={styles.formContainer} level="1">
           <Input
             disabled={this.state.loading}
             label="Durée maximum du parcours en heure"
@@ -102,7 +94,7 @@ export default class Home extends Component {
             disabled={this.state.loading}
             label="Prix maximum par personne"
             size="large"
-            style={styles.input}
+            style={styles.amount}
             accessoryRight={AmountIcon}
             value={this.state.amount}
             onChangeText={this.setAmount}
@@ -113,7 +105,7 @@ export default class Home extends Component {
             }
           />
 
-          <Divider style={styles.input} />
+          <Divider style={styles.divider} />
 
           <Select
             disabled={this.state.loading}
@@ -471,7 +463,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: "center",
     alignItems: "center",
-    minHeight: 200,
+    minHeight: 75,
     backgroundColor: "#FFA13D",
   },
   filterLabel: {
@@ -480,11 +472,18 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
+    marginTop: 18,
     paddingTop: 32,
     paddingHorizontal: 16,
   },
   input: {
     marginTop: 16,
+  },
+  amount: {
+    marginVertical: 16,
+  },
+  divider: {
+    marginVertical: 22,
   },
   text: {
     margin: 2,
