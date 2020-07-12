@@ -40,7 +40,7 @@ export default class Profil extends Component {
 
   render() {
     return (
-      <Layout level="2" style={styles.container}>
+      <Layout level="1" style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.headerText}>
             <AntDesign name="user" size={64} color="white" />
@@ -93,7 +93,9 @@ export default class Profil extends Component {
   };
 
   delete = () => {
-    console.log("Delete.");
+    this.props.navigation.navigate("DeleteAccount", {
+      token: this.state.token,
+    });
   };
 
   _getToken = async () => {
@@ -116,7 +118,7 @@ export default class Profil extends Component {
       },
     })
       .then((response) => response.json())
-      .then(async (response) => {
+      .then((response) => {
         this.setState({
           loading: false,
           disable: false,
@@ -125,7 +127,6 @@ export default class Profil extends Component {
           this.setState({
             user: response.user,
           });
-          console.log(response.user);
         } else {
           createAlert("Oups !", response.messages, false);
           this.setState({
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   delete: {
-    marginTop: 12,
+    marginVertical: 12,
     marginHorizontal: 16,
   },
 });

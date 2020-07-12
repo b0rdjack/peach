@@ -5,6 +5,7 @@ import Home from "../pages/home/Home";
 import Journeys from "../pages/journeys/Journeys";
 import { AntDesign } from "@expo/vector-icons";
 import Profil from "../pages/profil/Profil";
+import DeleteAccount from "../pages/delete_account/DeleteAccount";
 
 const AppNavigation = createStackNavigator(
   {
@@ -49,6 +50,12 @@ const AppNavigation = createStackNavigator(
         title: "Profil"
       }
     },
+    DeleteAccount: {
+      screen: DeleteAccount,
+      navigationOptions: {
+        title: "Paramètres"
+      }
+    }
   },
   {
     intialRouteName: "Home",

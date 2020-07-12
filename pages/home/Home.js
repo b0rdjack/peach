@@ -359,7 +359,12 @@ export default class Home extends Component {
         location_permission: false,
       });
     }
-    let location = await Location.getCurrentPositionAsync({});
+    let location = await Location.getCurrentPositionAsync({}).catch((e) => {
+      this.setState({
+        loading: false,
+        location: null,
+      });
+    });
     this.setState({
       location: {
         latitude: location.coords.latitude,
