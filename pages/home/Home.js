@@ -435,11 +435,8 @@ export default class Home extends Component {
             });
             if (!response.error) {
               let journeys = response.journeys;
-              journeys[0].sections = journeys[0].sections.concat(
-                journeys[0].sections
-              );
               this.props.navigation.navigate("Journeys", {
-                journeys: journeys.concat(journeys),
+                journeys: journeys,
                 position: {
                   longitude: this.state.location.longitude,
                   latitude: this.state.location.latitude,

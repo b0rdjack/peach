@@ -56,7 +56,7 @@ export default class Journeys extends Component {
                     data={this.state.journeys}
                     renderItem={({ item }) => <Journey journey={item} />}
                     keyExtractor={(item, index) => {
-                      return item.id;
+                      return index.toString();
                     }}
                   />
                 </View>
