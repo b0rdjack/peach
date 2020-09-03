@@ -104,7 +104,9 @@ export default class Home extends Component {
                 : ""
             }
           />
-
+          <Text category="c2">
+            Les prix peuvent être légèrement différent sur place.
+          </Text>
           <Divider style={styles.divider} />
 
           <Select
