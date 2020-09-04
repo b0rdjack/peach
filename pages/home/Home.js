@@ -40,12 +40,14 @@ export default class Home extends Component {
       showAmountError: false,
       loading: false,
       subcategories: [],
+      disableTags: true,
+      restaurant_subcategory: 0,
       showSubcategoryError: true,
       selectedSubcategories: [],
       selectedSubcategoriesIndex: [],
       selectedSubcategoriesLabel: "",
       tags: [],
-      showTagError: true,
+      showTagError: false,
       selectedTags: [],
       selectedTagsIndex: [],
       selectedTagsLabel: "",
@@ -58,6 +60,7 @@ export default class Home extends Component {
         longitude: null,
       },
       disable: false,
+      disableButton: false,
     };
   }
   async componentDidMount() {
@@ -149,7 +152,7 @@ export default class Home extends Component {
             ))}
           </Select>
           <Select
-            disabled={this.state.loading}
+            disabled={this.state.loading || this.state.disableTags}
             style={styles.input}
             placeholder="Tag d'activités souhaitées"
             accessoryLeft={TagIcon}
@@ -173,7 +176,7 @@ export default class Home extends Component {
           style={styles.searchButton}
           onPress={this._onSearch}
           size="giant"
-          disable={this.state.loading}
+          disable={this.state.loading || this.state.disableButton}
         >
           Générer un parcours !
         </Button>
@@ -280,11 +283,15 @@ export default class Home extends Component {
       selectedSubcategoriesLabel =
         selectedSubcategoriesLabel + tmp_subcategory.label + ", ";
     });
-
+    let containesRestaurant = selectedSubcategories.includes(
+      this.state.restaurant_subcategory
+    );
     this.setState({
       selectedSubcategories: selectedSubcategories,
       selectedSubcategoriesIndex: selectedSubcategoriesIndex,
       selectedSubcategoriesLabel: selectedSubcategoriesLabel.slice(0, -2),
+      disableTags: !containesRestaurant,
+      showTagError: containesRestaurant,
     });
     selectedSubcategoriesLabel.length == 0
       ? this.setState({ showSubcategoryError: true })
@@ -337,13 +344,20 @@ export default class Home extends Component {
           loading: false,
         });
         if (!response.error) {
+          let tmp_restaurant = response.subcategories.find(
+            (subcategory) => subcategory.label === "Restaurant"
+          );
           this.setState({
             subcategories: response.subcategories,
             tags: response.tags,
             transports: response.transports,
+            restaurant_subcategory: tmp_restaurant,
           });
         } else {
           createAlert("Oups !", response.messages, false);
+          this.setState({
+            disableButton: true,
+          });
         }
       })
       .catch((e) => {
@@ -437,6 +451,7 @@ export default class Home extends Component {
             });
             if (!response.error) {
               let journeys = response.journeys;
+              console.log(journeys);
               this.props.navigation.navigate("Journeys", {
                 journeys: journeys,
                 position: {
