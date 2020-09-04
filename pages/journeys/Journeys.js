@@ -53,7 +53,7 @@ export default class Journeys extends Component {
               return (
                 <View key={index} style={{ flex: 1 }}>
                   <FlatList
-                    data={this.state.journeys}
+                    data={[journey]}
                     renderItem={({ item }) => <Journey journey={item} />}
                     keyExtractor={(item, index) => {
                       return index.toString();
@@ -119,7 +119,7 @@ export default class Journeys extends Component {
       this.state.position.latitude +
       "%2C" +
       this.state.position.longitude;
-    // Destionation
+    // Destination
     let last_journey = this.state.journeys[this.state.journeys.length - 1];
     let last_section = last_journey.sections[last_journey.sections.length - 1];
     let last_section_latitude = last_section.to.latitude;
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   gmaps_button: {
     marginHorizontal: 16,
-    marginVertical: 8,
+    marginVertical: 2,
   },
   footer_text: {
     marginBottom: 8,
