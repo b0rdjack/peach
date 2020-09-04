@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginHorizontal: 5,
+    flexShrink: 1
   },
   icon: {
     width: 24,
