@@ -451,7 +451,6 @@ export default class Home extends Component {
             });
             if (!response.error) {
               let journeys = response.journeys;
-              console.log(journeys);
               this.props.navigation.navigate("Journeys", {
                 journeys: journeys,
                 position: {
