@@ -1,1 +1,1 @@
-export const API_URL ='http://google.fr/api/'
+export const API_URL ='https://goyave.xyz/api/'
