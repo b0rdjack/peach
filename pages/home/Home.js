@@ -17,6 +17,7 @@ import { KeyboardAvoidingView } from "../login/3rd-party";
 import { color } from "react-native-reanimated";
 import { API_URL } from "../../constant";
 import { createAlert } from "../../components/Alert";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from "expo-location";
 
 const ClockIcon = (props) => <Icon name="clock" {...props} />;
@@ -79,6 +80,8 @@ export default class Home extends Component {
       },
       disable: false,
       disableButton: false,
+      datePicker: new Date(),
+      show: false,
     };
   }
   async componentDidMount() {
@@ -102,16 +105,26 @@ export default class Home extends Component {
             disabled={this.state.loading}
             label="Durée maximum du parcours en heure"
             size="large"
+            ref="timepicker"
             accessoryRight={ClockIcon}
             value={this.state.duration}
-            onChangeText={this.setDuration}
+            onFocus={this.showDatePicker}
+            onChange={this.showDatePicker}
             caption={
               this.state.showDurationError
                 ? "La durée n'est pas valide (ex: 00:45). Saisir au minimum 45 minutes."
                 : ""
             }
           />
-
+          {this.state.show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={this.state.datePicker}
+              mode="time"
+              display="spinner"
+              onChange={this.setDuration}
+            />
+          )}
           <Select
             disabled={this.state.loading}
             style={styles.input}
@@ -130,7 +143,7 @@ export default class Home extends Component {
               <SelectItem title={price.label} key={price.id} />
             ))}
           </Select>
-            <Text></Text>
+          <Text></Text>
           <Text category="c2">
             Les prix peuvent être légèrement différent sur place.
           </Text>
@@ -209,52 +222,38 @@ export default class Home extends Component {
     );
   }
 
-  setDuration = (value) => {
-    if (value == "00:00") {
-      this.setState({
-        duration: value,
-        showDurationError: true,
-      });
-    } else if (this.checkTimeValidity(value)) {
-      this.setState({
-        duration: value,
-        showDurationError: false,
-      });
-    } else {
-      this.setState({
-        duration: value,
-        showDurationError: true,
-      });
-    }
+  showDatePicker = () => {
+    this.setState({
+      show: true,
+    });
   };
 
-  // Return true if valid
-  checkTimeValidity = (value) => {
-    let splited = value.split(":");
-    let hour = splited[0];
-    let minute = splited[1];
-    let validity = true;
-
-    if (this.isInt(hour) && this.isInt(minute)) {
-      hour = parseInt(hour, 10);
-      minute = parseInt(minute, 10);
-      // Hour not more than 23 or minutes not mort than 59. OR (not less than 30 minutes)
-      if (hour > 23 || minute > 59 || (hour == 0 && minute < 45)) {
-        validity = false;
-      }
+  setDuration = (event, selectedTime) => {
+    if (selectedTime === undefined) {
+      this.setState({
+        show: false,
+        datePicker: selectedTime,
+      });
     } else {
-      validity = false;
-    }
-    return validity;
-  };
+      let hours = selectedTime.getHours();
+      let minutes = selectedTime.getMinutes();
+      let showDurationError = false;
 
-  isInt = (value) => {
-    return (
-      !isNaN(value) &&
-      (function (x) {
-        return (x | 0) === x;
-      })(parseFloat(value))
-    );
+      if (hours == 0 && minutes < 45) showDurationError = true;
+
+      hours < 10 ? (hours = "0" + hours) : false;
+      minutes < 10 ? (minutes = "0" + minutes) : false;
+
+      let duration = hours + ":" + minutes;
+
+      this.setState({
+        duration: duration,
+        showDurationError: showDurationError,
+        show: false,
+        datePicker: selectedTime,
+      });
+    }
+    this.refs.timepicker.blur();
   };
 
   setSelectedPrice = (value) => {
