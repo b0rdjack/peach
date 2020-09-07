@@ -17,6 +17,7 @@ import { KeyboardAvoidingView } from "../login/3rd-party";
 import { color } from "react-native-reanimated";
 import { API_URL } from "../../constant";
 import { createAlert } from "../../components/Alert";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Location from "expo-location";
 
 const ClockIcon = (props) => <Icon name="clock" {...props} />;
@@ -36,8 +37,26 @@ export default class Home extends Component {
       token: "",
       duration: "00:00",
       showDurationError: true,
-      amount: "00.00",
-      showAmountError: false,
+      prices: [
+        {
+          id: "€",
+          label: "€: < 10€",
+        },
+        {
+          id: "€€",
+          label: "€€: < 15€",
+        },
+        {
+          id: "€€€",
+          label: "€€€: < 25€",
+        },
+        {
+          id: "€€€€",
+          label: "€€€€: > 26€",
+        },
+      ],
+      selectedPrice: "",
+      showPriceError: true,
       loading: false,
       subcategories: [],
       disableTags: true,
@@ -61,6 +80,8 @@ export default class Home extends Component {
       },
       disable: false,
       disableButton: false,
+      datePicker: new Date(),
+      show: false,
     };
   }
   async componentDidMount() {
@@ -84,32 +105,49 @@ export default class Home extends Component {
             disabled={this.state.loading}
             label="Durée maximum du parcours en heure"
             size="large"
+            ref="timepicker"
             accessoryRight={ClockIcon}
             value={this.state.duration}
-            onChangeText={this.setDuration}
+            onFocus={this.showDatePicker}
+            onChange={this.showDatePicker}
             caption={
               this.state.showDurationError
                 ? "La durée n'est pas valide (ex: 00:45). Saisir au minimum 45 minutes."
                 : ""
             }
           />
-          <Input
+          {this.state.show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={this.state.datePicker}
+              mode="time"
+              display="spinner"
+              onChange={this.setDuration}
+            />
+          )}
+          <Select
             disabled={this.state.loading}
-            label="Prix maximum par personne"
+            style={styles.input}
+            placeholder="Catégorie de prix/personne"
+            accessoryLeft={AmountIcon}
+            value={this.state.selectedPrice.label}
+            onSelect={(index) => this.setSelectedPrice(index)}
             size="large"
-            style={styles.amount}
-            accessoryRight={AmountIcon}
-            value={this.state.amount}
-            onChangeText={this.setAmount}
             caption={
-              this.state.showAmountError
-                ? "Le montant n'est pas valide (ex: 10.45)"
+              this.state.showPriceError
+                ? "Veuillez sélectionner une catégorie de prix"
                 : ""
             }
-          />
+          >
+            {this.state.prices.map((price, index) => (
+              <SelectItem title={price.label} key={price.id} />
+            ))}
+          </Select>
+          <Text></Text>
           <Text category="c2">
             Les prix peuvent être légèrement différent sur place.
           </Text>
+
           <Divider style={styles.divider} />
 
           <Select
@@ -184,85 +222,45 @@ export default class Home extends Component {
     );
   }
 
-  setDuration = (value) => {
-    if (value == "00:00") {
-      this.setState({
-        duration: value,
-        showDurationError: true,
-      });
-    } else if (this.checkTimeValidity(value)) {
-      this.setState({
-        duration: value,
-        showDurationError: false,
-      });
-    } else {
-      this.setState({
-        duration: value,
-        showDurationError: true,
-      });
-    }
+  showDatePicker = () => {
+    this.setState({
+      show: true,
+    });
   };
 
-  // Return true if valid
-  checkTimeValidity = (value) => {
-    let splited = value.split(":");
-    let hour = splited[0];
-    let minute = splited[1];
-    let validity = true;
-
-    if (this.isInt(hour) && this.isInt(minute)) {
-      hour = parseInt(hour, 10);
-      minute = parseInt(minute, 10);
-      // Hour not more than 23 or minutes not mort than 59. OR (not less than 30 minutes)
-      if (hour > 23 || minute > 59 || (hour == 0 && minute < 45)) {
-        validity = false;
-      }
-    } else {
-      validity = false;
-    }
-    return validity;
-  };
-
-  isInt = (value) => {
-    return (
-      !isNaN(value) &&
-      (function (x) {
-        return (x | 0) === x;
-      })(parseFloat(value))
-    );
-  };
-
-  setAmount = (value) => {
-    if (this.checkAmountValidity(value)) {
+  setDuration = (event, selectedTime) => {
+    if (selectedTime === undefined) {
       this.setState({
-        amount: value,
-        showAmountError: false,
+        show: false,
+        datePicker: selectedTime,
       });
     } else {
+      let hours = selectedTime.getHours();
+      let minutes = selectedTime.getMinutes();
+      let showDurationError = false;
+
+      if (hours == 0 && minutes < 45) showDurationError = true;
+
+      hours < 10 ? (hours = "0" + hours) : false;
+      minutes < 10 ? (minutes = "0" + minutes) : false;
+
+      let duration = hours + ":" + minutes;
+
       this.setState({
-        amount: value,
-        showAmountError: true,
+        duration: duration,
+        showDurationError: showDurationError,
+        show: false,
+        datePicker: selectedTime,
       });
     }
+    this.refs.timepicker.blur();
   };
 
-  checkAmountValidity = (value) => {
-    let splited = value.split(".");
-    let euro = splited[0];
-    let cents = splited[1];
-    let validity = true;
-
-    if (this.isInt(euro) && this.isInt(cents)) {
-      euro = parseInt(euro, 10);
-      cents = parseInt(cents, 10);
-
-      if (cents > 99) {
-        validity = false;
-      }
-    } else {
-      validity = false;
-    }
-    return validity;
+  setSelectedPrice = (value) => {
+    this.setState({
+      selectedPrice: this.state.prices[value.row],
+      showPriceError: false,
+    });
   };
 
   setSelectedTransport = (value) => {
@@ -391,7 +389,7 @@ export default class Home extends Component {
 
   _onSearch = async () => {
     if (
-      this.state.showAmountError ||
+      this.state.showPriceError ||
       this.state.showDurationError ||
       this.state.showSubcategoryError ||
       this.state.showTagError ||
@@ -438,7 +436,7 @@ export default class Home extends Component {
               latitude: this.state.location.latitude,
             },
             duration: this.getSecondes(this.state.duration),
-            amount: this.state.amount,
+            price: this.state.selectedPrice.id,
             transport: this.state.selectedTransport,
             tags: this.state.selectedTags,
             subcategories: this.state.selectedSubcategories,

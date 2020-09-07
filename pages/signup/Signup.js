@@ -198,7 +198,7 @@ export default class Signup extends Component {
     if (selectedDate != undefined) {
       let day = selectedDate.getDate();
       if (day < 10) day = "0" + day;
-      let month = selectedDate.getMonth();
+      let month = selectedDate.getMonth() + 1;
       if (month < 10) month = "0" + month;
       let year = selectedDate.getFullYear();
       this.setState({
@@ -234,7 +234,7 @@ export default class Signup extends Component {
   };
 
   setPassword = (value) => {
-    let regex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$/;
+    let regex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[()~\][{}_|#?!@$%^&=+€*-]).{8,32}$/;
     if (!regex.test(value)) {
       this.setState({
         password: value,
