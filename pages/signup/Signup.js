@@ -198,7 +198,7 @@ export default class Signup extends Component {
     if (selectedDate != undefined) {
       let day = selectedDate.getDate();
       if (day < 10) day = "0" + day;
-      let month = selectedDate.getMonth();
+      let month = selectedDate.getMonth() + 1;
       if (month < 10) month = "0" + month;
       let year = selectedDate.getFullYear();
       this.setState({
