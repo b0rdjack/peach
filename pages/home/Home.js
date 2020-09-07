@@ -36,8 +36,26 @@ export default class Home extends Component {
       token: "",
       duration: "00:00",
       showDurationError: true,
-      amount: "00.00",
-      showAmountError: false,
+      prices: [
+        {
+          id: "€",
+          label: "€: < 10€",
+        },
+        {
+          id: "€€",
+          label: "€€: < 15€",
+        },
+        {
+          id: "€€€",
+          label: "€€€: < 25€",
+        },
+        {
+          id: "€€€€",
+          label: "€€€€: > 26€",
+        },
+      ],
+      selectedPrice: "",
+      showPriceError: true,
       loading: false,
       subcategories: [],
       disableTags: true,
@@ -93,23 +111,30 @@ export default class Home extends Component {
                 : ""
             }
           />
-          <Input
+
+          <Select
             disabled={this.state.loading}
-            label="Prix maximum par personne"
+            style={styles.input}
+            placeholder="Catégorie de prix/personne"
+            accessoryLeft={AmountIcon}
+            value={this.state.selectedPrice.label}
+            onSelect={(index) => this.setSelectedPrice(index)}
             size="large"
-            style={styles.amount}
-            accessoryRight={AmountIcon}
-            value={this.state.amount}
-            onChangeText={this.setAmount}
             caption={
-              this.state.showAmountError
-                ? "Le montant n'est pas valide (ex: 10.45)"
+              this.state.showPriceError
+                ? "Veuillez sélectionner une catégorie de prix"
                 : ""
             }
-          />
+          >
+            {this.state.prices.map((price, index) => (
+              <SelectItem title={price.label} key={price.id} />
+            ))}
+          </Select>
+            <Text></Text>
           <Text category="c2">
             Les prix peuvent être légèrement différent sur place.
           </Text>
+
           <Divider style={styles.divider} />
 
           <Select
@@ -232,37 +257,11 @@ export default class Home extends Component {
     );
   };
 
-  setAmount = (value) => {
-    if (this.checkAmountValidity(value)) {
-      this.setState({
-        amount: value,
-        showAmountError: false,
-      });
-    } else {
-      this.setState({
-        amount: value,
-        showAmountError: true,
-      });
-    }
-  };
-
-  checkAmountValidity = (value) => {
-    let splited = value.split(".");
-    let euro = splited[0];
-    let cents = splited[1];
-    let validity = true;
-
-    if (this.isInt(euro) && this.isInt(cents)) {
-      euro = parseInt(euro, 10);
-      cents = parseInt(cents, 10);
-
-      if (cents > 99) {
-        validity = false;
-      }
-    } else {
-      validity = false;
-    }
-    return validity;
+  setSelectedPrice = (value) => {
+    this.setState({
+      selectedPrice: this.state.prices[value.row],
+      showPriceError: false,
+    });
   };
 
   setSelectedTransport = (value) => {
@@ -391,7 +390,7 @@ export default class Home extends Component {
 
   _onSearch = async () => {
     if (
-      this.state.showAmountError ||
+      this.state.showPriceError ||
       this.state.showDurationError ||
       this.state.showSubcategoryError ||
       this.state.showTagError ||
@@ -438,7 +437,7 @@ export default class Home extends Component {
               latitude: this.state.location.latitude,
             },
             duration: this.getSecondes(this.state.duration),
-            amount: this.state.amount,
+            price: this.state.selectedPrice.id,
             transport: this.state.selectedTransport,
             tags: this.state.selectedTags,
             subcategories: this.state.selectedSubcategories,
