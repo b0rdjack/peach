@@ -234,7 +234,7 @@ export default class Signup extends Component {
   };
 
   setPassword = (value) => {
-    let regex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$/;
+    let regex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[()~\][{}_|#?!@$%^&=+€*-]).{8,32}$/;
     if (!regex.test(value)) {
       this.setState({
         password: value,
