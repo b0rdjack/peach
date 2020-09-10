@@ -189,26 +189,31 @@ export default class Home extends Component {
               <SelectItem title={subcategories.label} key={subcategories.id} />
             ))}
           </Select>
-          <Select
-            disabled={this.state.loading || this.state.disableTags}
-            style={styles.input}
-            placeholder="Tag d'activités souhaitées"
-            accessoryLeft={TagIcon}
-            size="large"
-            multiSelect={true}
-            value={this.state.selectedTagsLabel}
-            onSelect={(index) => this.setSelectedTags(index)}
-            selectedIndex={this.state.selectedTagsIndex}
-            caption={
-              this.state.showTagError
-                ? "Veuillez sélectionner au moins un tag"
-                : ""
-            }
-          >
-            {this.state.tags.map((tags) => (
-              <SelectItem title={tags.label} key={tags.id} />
-            ))}
-          </Select>
+          <View>
+            {!this.state.disableTags && (
+              <Select
+                show={false}
+                disabled={this.state.loading}
+                style={styles.input}
+                placeholder="Type de cuisine"
+                accessoryLeft={TagIcon}
+                size="large"
+                multiSelect={true}
+                value={this.state.selectedTagsLabel}
+                onSelect={(index) => this.setSelectedTags(index)}
+                selectedIndex={this.state.selectedTagsIndex}
+                caption={
+                  this.state.showTagError
+                    ? "Veuillez sélectionner au moins un type de cuisine"
+                    : ""
+                }
+              >
+                {this.state.tags.map((tags) => (
+                  <SelectItem title={tags.label} key={tags.id} />
+                ))}
+              </Select>
+            )}
+          </View>
         </Layout>
         <Button
           style={styles.searchButton}
