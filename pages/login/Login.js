@@ -47,6 +47,7 @@ export default class Login extends Component {
             disabled={this.state.loading}
             value={this.state.email}
             onChangeText={this.setEmail}
+            status={this.state.showEmailError ? "danger" : "success"}
             caption={
               this.state.showEmailError ? "Adresse e-mail non valide" : ""
             }
@@ -60,6 +61,7 @@ export default class Login extends Component {
             value={this.state.password}
             secureTextEntry={true}
             onChangeText={this.setPassword}
+            status={this.state.showPasswordError ? "danger" : "success"}
             caption={
               this.state.showPasswordError ? "Mot de passe non valide" : ""
             }
