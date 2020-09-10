@@ -80,7 +80,7 @@ export default class Home extends Component {
       },
       disable: false,
       disableButton: false,
-      datePicker: new Date(),
+      datePicker: new Date("July 25, 1997 00:00:00"),
       show: false,
     };
   }
@@ -122,6 +122,7 @@ export default class Home extends Component {
               value={this.state.datePicker}
               mode="time"
               display="spinner"
+              locale="fr-FR"
               onChange={this.setDuration}
             />
           )}
