@@ -80,7 +80,7 @@ export default class Home extends Component {
       },
       disable: false,
       disableButton: false,
-      datePicker: new Date(),
+      datePicker: new Date("July 25, 1997 00:00:00"),
       show: false,
     };
   }
@@ -110,6 +110,7 @@ export default class Home extends Component {
             value={this.state.duration}
             onFocus={this.showDatePicker}
             onChange={this.showDatePicker}
+            status={this.state.showDurationError ? "danger" : "success"}
             caption={
               this.state.showDurationError
                 ? "La durée n'est pas valide (ex: 00:45). Saisir au minimum 45 minutes."
@@ -122,6 +123,7 @@ export default class Home extends Component {
               value={this.state.datePicker}
               mode="time"
               display="spinner"
+              locale="fr-FR"
               onChange={this.setDuration}
             />
           )}
@@ -133,6 +135,7 @@ export default class Home extends Component {
             value={this.state.selectedPrice.label}
             onSelect={(index) => this.setSelectedPrice(index)}
             size="large"
+            status={this.state.showPriceError ? "danger" : "success"}
             caption={
               this.state.showPriceError
                 ? "Veuillez sélectionner une catégorie de prix"
@@ -158,6 +161,7 @@ export default class Home extends Component {
             value={this.state.selectedTransport.label}
             onSelect={(index) => this.setSelectedTransport(index)}
             size="large"
+            status={this.state.showTransportError ? "danger" : "success"}
             caption={
               this.state.showTransportError
                 ? "Veuillez sélectionner un mode de transport"
@@ -179,6 +183,7 @@ export default class Home extends Component {
             value={this.state.selectedSubcategoriesLabel}
             onSelect={(index) => this.setSelectedSubcategories(index)}
             selectedIndex={this.state.selectedSubcategoriesIndex}
+            status={this.state.showSubcategoryError ? "danger" : "success"}
             caption={
               this.state.showSubcategoryError
                 ? "Veuillez sélectionner au moins une catégorie"
@@ -189,26 +194,32 @@ export default class Home extends Component {
               <SelectItem title={subcategories.label} key={subcategories.id} />
             ))}
           </Select>
-          <Select
-            disabled={this.state.loading || this.state.disableTags}
-            style={styles.input}
-            placeholder="Tag d'activités souhaitées"
-            accessoryLeft={TagIcon}
-            size="large"
-            multiSelect={true}
-            value={this.state.selectedTagsLabel}
-            onSelect={(index) => this.setSelectedTags(index)}
-            selectedIndex={this.state.selectedTagsIndex}
-            caption={
-              this.state.showTagError
-                ? "Veuillez sélectionner au moins un tag"
-                : ""
-            }
-          >
-            {this.state.tags.map((tags) => (
-              <SelectItem title={tags.label} key={tags.id} />
-            ))}
-          </Select>
+          <View>
+            {!this.state.disableTags && (
+              <Select
+                show={false}
+                disabled={this.state.loading}
+                style={styles.input}
+                placeholder="Type de cuisine"
+                accessoryLeft={TagIcon}
+                size="large"
+                multiSelect={true}
+                value={this.state.selectedTagsLabel}
+                onSelect={(index) => this.setSelectedTags(index)}
+                selectedIndex={this.state.selectedTagsIndex}
+                status={this.state.showTagError ? "danger" : "success"}
+                caption={
+                  this.state.showTagError
+                    ? "Veuillez sélectionner au moins un type de cuisine"
+                    : ""
+                }
+              >
+                {this.state.tags.map((tags) => (
+                  <SelectItem title={tags.label} key={tags.id} />
+                ))}
+              </Select>
+            )}
+          </View>
         </Layout>
         <Button
           style={styles.searchButton}

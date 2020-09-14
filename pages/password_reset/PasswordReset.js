@@ -49,6 +49,7 @@ export default class PasswordReset extends Component {
             disabled={this.state.loading}
             value={this.state.email}
             onChangeText={this.setEmail}
+            status={this.state.showEmailError ? "danger" : "success"}
             caption={
               this.state.showEmailError ? "Adresse e-mail non valide" : ""
             }

@@ -22,13 +22,13 @@ export default class Signup extends Component {
       lastname: "",
       showLastnameError: true,
       firstname: "",
-      showFirsnameError: true,
+      showFirstnameError: true,
       email: "",
       showEmailError: true,
       password: "",
       showPasswordError: true,
       confirm_password: "",
-      showConfirmpasswordError: true,
+      showConfirmPasswordError: false,
       datepicker: new Date(),
       date_of_birth: "JJ/MM/AAAA",
       showDateofbirthError: true,
@@ -61,7 +61,8 @@ export default class Signup extends Component {
             disabled={this.state.loading}
             value={this.state.firstname}
             onChangeText={this.setFirstname}
-            caption={this.state.showFirsnameError ? "Prénom non valide" : ""}
+            status={this.state.showFirstnameError ? "danger" : "success"}
+            caption={this.state.showFirstnameError ? "Prénom non valide" : ""}
           />
           <Input
             placeholder="Nom"
@@ -69,6 +70,7 @@ export default class Signup extends Component {
             accessoryRight={PersonIcon}
             value={this.state.lastname}
             onChangeText={this.setLastname}
+            status={this.state.showLastnameError ? "danger" : "success"}
             caption={this.state.showLastnameError ? "Nom non valide" : ""}
           />
           <Input
@@ -77,8 +79,10 @@ export default class Signup extends Component {
             accessoryRight={CalendarIcon}
             disabled={this.state.loading}
             value={this.state.date_of_birth}
+            ref="datepicker"
             onFocus={this.showDatePicker}
             onChange={this.showDatePicker}
+            status={this.state.showDateofbirthError ? "danger" : "success"}
             caption={
               this.state.showDateofbirthError
                 ? "Date de naissance non valide"
@@ -102,6 +106,7 @@ export default class Signup extends Component {
             disabled={this.state.loading}
             value={this.state.email}
             onChangeText={this.setEmail}
+            status={this.state.showEmailError ? "danger" : "success"}
             caption={
               this.state.showEmailError ? "Adresse e-mail non valide" : ""
             }
@@ -114,6 +119,7 @@ export default class Signup extends Component {
             disabled={this.state.loading}
             secureTextEntry={true}
             onChangeText={this.setPassword}
+            status={this.state.showPasswordError ? "danger" : "success"}
             caption={
               this.state.showPasswordError ? this.state.passwordMessage : ""
             }
@@ -126,8 +132,9 @@ export default class Signup extends Component {
             disabled={this.state.loading}
             secureTextEntry={true}
             onChangeText={this.setConfirmPassword}
+            status={this.state.showConfirmPasswordError ? "danger" : "success"}
             caption={
-              this.state.showConfirmpasswordError
+              this.state.showConfirmPasswordError
                 ? "Les mots de passe ne correspondent pas"
                 : ""
             }
@@ -155,7 +162,7 @@ export default class Signup extends Component {
   }
 
   setLastname = (value) => {
-    if (value.lenght <= 1) {
+    if (value.length <= 1) {
       this.setState({
         lastname: value,
         showLastnameError: true,
@@ -169,15 +176,15 @@ export default class Signup extends Component {
   };
 
   setFirstname = (value) => {
-    if (value.lenght <= 1) {
+    if (value.length <= 1) {
       this.setState({
         firstname: value,
-        showFirsnameError: true,
+        showFirstnameError: true,
       });
     } else {
       this.setState({
         firstname: value,
-        showFirsnameError: false,
+        showFirstnameError: false,
       });
     }
   };
@@ -216,6 +223,7 @@ export default class Signup extends Component {
         });
       }
     }
+    this.refs.datepicker.blur();
   };
 
   setEmail = (value) => {
@@ -246,18 +254,28 @@ export default class Signup extends Component {
         showPasswordError: false,
       });
     }
+
+    if (value != this.state.confirm_password) {
+      this.setState({
+        showConfirmPasswordError: true,
+      });
+    } else {
+      this.setState({
+        showConfirmPasswordError: false,
+      });
+    }
   };
 
   setConfirmPassword = (value) => {
     if (value != this.state.password) {
       this.setState({
         confirm_password: value,
-        showConfirmpasswordError: true,
+        showConfirmPasswordError: true,
       });
     } else {
       this.setState({
         confirm_password: value,
-        showConfirmpasswordError: false,
+        showConfirmPasswordError: false,
       });
     }
   };
@@ -283,7 +301,7 @@ export default class Signup extends Component {
       !this.state.showDateofbirthError &&
       !this.state.showEmailError &&
       !this.state.showPasswordError &&
-      !this.state.showConfirmpasswordError
+      !this.state.showConfirmPasswordError
     ) {
       this.setState({
         loading: true,
@@ -320,7 +338,7 @@ export default class Signup extends Component {
               password: "",
               showPasswordError: true,
               confirm_password: "",
-              showConfirmpasswordError: true,
+              showConfirmPasswordError: true,
               datepicker: new Date(),
               date_of_birth: "JJ/MM/AAAA",
               showDateofbirthError: true,
