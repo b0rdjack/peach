@@ -69,14 +69,14 @@ npm install
 
 ## Install 📥
 
-    $ git clone https://github.com/AyazBulls/peach.git
+    $ git clone https://github.com/b0rdjack/peach.git
     $ cd peach
     $ npm install
 
 ## Configure app 🔧
 
 Open `constant.js` then edit it with your settings. You will need:
-- API_URL
+- API_URL: URL of the [API](https://github.com/b0rdjack/api-mango.git)
 
 ## Running the project 🚀
 
